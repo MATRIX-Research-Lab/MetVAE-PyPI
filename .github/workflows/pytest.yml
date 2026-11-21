@@ -1,0 +1,56 @@
+# Unit tests of metvae on Linux, macOS, and Windows. Linux covers the oldest
+# and newest supported Python versions; macOS and Windows use one version.
+name: pytest
+
+on:
+  push:
+    branches: [main, devel]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.os }} (Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: "3.9"}
+          - {os: ubuntu-latest, python: "3.11"}
+          - {os: ubuntu-latest, python: "3.13"}
+          - {os: macos-latest, python: "3.12"}
+          - {os: windows-latest, python: "3.12"}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      # The CPU build of torch avoids the large CUDA wheels on Linux and
+      # Windows; macOS wheels are CPU-only already. PyPI supplies the
+      # dependencies that the PyTorch index does not host.
+      - name: Install torch (CPU)
+        if: runner.os != 'macOS'
+        run: >-
+          python -m pip install torch
+          --index-url https://download.pytorch.org/whl/cpu
+          --extra-index-url https://pypi.org/simple
+
+      - name: Install metvae
+        run: python -m pip install -e ".[test]"
+
+      - name: Report versions
+        run: python -c "import sys, torch, metvae; print(sys.version); print('torch', torch.__version__); print('metvae', metvae.__version__)"
+
+      - name: Run tests
+        run: python -m pytest -ra --runslow

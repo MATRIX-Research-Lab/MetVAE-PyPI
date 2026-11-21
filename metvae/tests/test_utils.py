@@ -40,8 +40,9 @@ def test_export_graphml_matches_manual_edges():
     import networkx as nx
 
     corr = _symmetric_corr()
-    sparse_df = corr.where(corr.abs() >= 0.25, 0.0)
-    np.fill_diagonal(sparse_df.values, 1.0)
+    sparse = corr.where(corr.abs() >= 0.25, 0.0).to_numpy(copy=True)
+    np.fill_diagonal(sparse, 1.0)
+    sparse_df = pd.DataFrame(sparse, index=corr.index, columns=corr.columns)
 
     cutoffs = [0.3, 0.5]
     model = object.__new__(MetVAE)

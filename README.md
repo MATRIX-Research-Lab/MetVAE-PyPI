@@ -1,5 +1,13 @@
 # MetVAE
 
+MetVAE is available for Python, for R, and through a graphical interface.
+
+| Platform | Install | Source |
+| --- | --- | --- |
+| Python (this package) | `pip install metvae` | [GitHub](https://github.com/MATRIX-Research-Lab/MetVAE-PyPI), [PyPI](https://pypi.org/project/metvae/) |
+| R | `BiocManager::install("MATRIX-Research-Lab/MetVAE")` | [GitHub](https://github.com/MATRIX-Research-Lab/MetVAE) |
+| Graphical interface | See its README | [GNPS_Local](https://github.com/Some-Earth-2514/GNPS_Local) |
+
 MetVAE builds a correlation network from untargeted metabolomics data. The input is a table of metabolite abundances, with one row per sample and one column per metabolite, and an optional table of sample metadata such as batch, age, or diet. Zeros in the abundance table are treated as measurements that fell below the detection limit rather than as true absences, and they are filled in by a variational autoencoder. Covariate effects listed in the metadata are removed before the correlations are estimated. The output is a sparse correlation matrix, in which most metabolite pairs are set to exactly zero and the remaining pairs form the edges of a network. Two methods are available for deciding which pairs to keep: a p-value method with multiple-testing correction, and the SEC penalized estimator, whose tuning parameter is chosen by cross-validation.
 
 MetVAE can be used from Python or from the command line through `metvae-cli`.
@@ -16,6 +24,7 @@ MetVAE can be used from Python or from the command line through `metvae-cli`.
 - [Run time and memory](#run-time-and-memory)
 - [Command line](#command-line)
 - [Troubleshooting](#troubleshooting)
+- [Getting help](#getting-help)
 - [Citation](#citation)
 - [License](#license)
 
@@ -621,6 +630,10 @@ To use a fixed penalty instead of cross-validation, add `--rho 2.2`. In that cas
 | `CUDA not available. Falling back to CPU.` | `use_gpu=True` was passed but PyTorch cannot see a CUDA device. | Install a CUDA build of PyTorch, or leave `use_gpu=False`. This message also appears on a Mac, where Apple GPUs are not used. |
 | ``RuntimeError: logging=True requires tensorboard. Install it with `pip install tensorboard`.`` | TensorBoard is not installed. | Run `pip install "metvae[logging]"`, or set `logging=False`. |
 | ``RuntimeError: networkx is required for GraphML export. Install it with `pip install networkx`.`` | `networkx` is missing from the environment. | Run `pip install networkx`. |
+
+## Getting help
+
+Report bugs and ask questions on the [GitHub issue page](https://github.com/MATRIX-Research-Lab/MetVAE-PyPI/issues). Include the code or command you ran, the full error message, and the output of `pip show metvae torch`.
 
 ## Citation
 
