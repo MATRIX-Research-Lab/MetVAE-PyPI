@@ -73,7 +73,9 @@ def _matrix_p_adjust(p_matrix: torch.Tensor,
     q_mat.add_(q_mat.T.contiguous())
     return q_mat
 
-# Helper functions for SEC
+# Helper functions for SEC. Adapted from the MATLAB code sec.m of Cui, Leng and
+# Sun (2016) and distributed with the permission of Chenlei Leng (email,
+# November 2026).
 
 @torch.no_grad()
 def _projection_psd(
@@ -230,8 +232,11 @@ def _SEC_dense(
     ----------
     Cui, Y., Leng, C. and Sun, D. (2016). Sparse estimation of high-dimensional
     correlation matrices. Computational Statistics and Data Analysis, 93, 390-403.
-    Reference implementation:
-    https://warwick.ac.uk/fac/sci/statistics/staff/academic-research/leng/publications/sec.m
+    https://doi.org/10.1016/j.csda.2014.10.001
+
+    The implementation is adapted from the MATLAB code sec.m of Cui, Leng and
+    Sun (2016) and is distributed with the permission of Chenlei Leng (email,
+    November 2026).
     """
     if Rn.is_sparse:
         Rn = Rn.coalesce().to_dense()
